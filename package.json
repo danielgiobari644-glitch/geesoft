@@ -1,0 +1,9 @@
+{
+  "name": "gee",
+  "private": true,
+  "version": "1.0.0",
+  "description": "GEE — Building Digital Solutions for Real-World Problems. Pure HTML, CSS and JavaScript (no frameworks, no build toolchain).",
+  "scripts": {
+    "build": "node build.js"
+  }
+}
