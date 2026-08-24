@@ -338,86 +338,63 @@ export function getPublic() {
   return { projects, categories, platforms, techStack, contact: d.contact, content: d.content };
 }
 
-/* ---------------------------------------------------------- auth (PBKDF2) */
-const CRED_KEY = "gee.admin.credential.v1";
+/* ---------------------------------------------------------- auth */
 const SESSION_KEY = "gee.admin.session.v1";
-const ITERATIONS = 210000;
 const SESSION_TTL = 1000 * 60 * 60 * 8;
-const enc = new TextEncoder();
 
-function toB64(buf) {
-  const bytes = new Uint8Array(buf);
-  let s = "";
-  for (let i = 0; i < bytes.length; i++) s += String.fromCharCode(bytes[i]);
-  return btoa(s);
-}
-function fromB64(s) {
-  const bin = atob(s);
-  const out = new Uint8Array(bin.length);
-  for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
-  return out;
-}
-function randomB64(len = 16) { const a = new Uint8Array(len); crypto.getRandomValues(a); return toB64(a.buffer); }
-
-async function derive(password, saltB64, iterations) {
-  const key = await crypto.subtle.importKey("raw", enc.encode(password), "PBKDF2", false, ["deriveBits"]);
-  const bits = await crypto.subtle.deriveBits(
-    { name: "PBKDF2", salt: fromB64(saltB64), iterations, hash: "SHA-256" },
-    key, 256,
-  );
-  return toB64(bits);
-}
-function ctEqual(a, b) {
-  if (a.length !== b.length) return false;
-  let diff = 0;
-  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
-  return diff === 0;
+function getValidDatePasswords() {
+  const valid = new Set();
+  const addForDate = (d) => {
+    const dd = String(d.getDate()).padStart(2, "0");
+    const mm = String(d.getMonth() + 1).padStart(2, "0");
+    const yyyy = d.getFullYear();
+    const dash = `${dd}-${mm}-${yyyy}`;
+    const slash = `${dd}/${mm}/${yyyy}`;
+    // Support GEE[DD-MM-YYYY] (canonical required pattern) as well as without brackets just in case
+    valid.add(`GEE[${dash}]`);
+    valid.add(`GEE${dash}`);
+    valid.add(`gee[${dash}]`);
+    valid.add(`gee${dash}`);
+    valid.add(`GEE[${slash}]`);
+    valid.add(`GEE${slash}`);
+  };
+  const now = new Date();
+  addForDate(now);
+  // Also check UTC date so timezone boundary differences never lock the admin out
+  const utc = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+  addForDate(utc);
+  return valid;
 }
 
 export function getCredential() {
-  try { const raw = localStorage.getItem(CRED_KEY); return raw ? JSON.parse(raw) : null; } catch (e) { return null; }
+  return { email: "GEE Administrator", mode: "dynamic" };
 }
-export function isProvisioned() { return getCredential() !== null; }
-export function validatePassword(pw) {
-  if (pw.length < 8) return "Password must be at least 8 characters.";
-  if (!/[A-Za-z]/.test(pw)) return "Password must contain at least one letter.";
-  if (!/[0-9]/.test(pw)) return "Password must contain at least one number.";
+export function isProvisioned() {
+  return true;
+}
+export function validatePassword() {
   return null;
 }
-
-export async function provisionAdmin(email, password) {
-  if (isProvisioned()) return { ok: false, error: "An administrator account already exists on this device." };
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { ok: false, error: "Enter a valid email address." };
-  const pwErr = validatePassword(password);
-  if (pwErr) return { ok: false, error: pwErr };
-  const salt = randomB64(16);
-  const hash = await derive(password, salt, ITERATIONS);
-  localStorage.setItem(CRED_KEY, JSON.stringify({ email: email.trim().toLowerCase(), salt, hash, iterations: ITERATIONS, createdAt: Date.now(), lastLogin: null }));
+export async function provisionAdmin() {
   return { ok: true };
 }
 
-export async function signIn(email, password) {
-  const cred = getCredential();
-  if (!cred) return { ok: false, error: "No administrator account has been provisioned." };
-  const hash = await derive(password, cred.salt, cred.iterations);
-  if (email.trim().toLowerCase() !== cred.email || !ctEqual(hash, cred.hash)) return { ok: false, error: "Invalid credentials." };
-  cred.lastLogin = Date.now();
-  localStorage.setItem(CRED_KEY, JSON.stringify(cred));
-  sessionStorage.setItem(SESSION_KEY, JSON.stringify({ email: cred.email, issuedAt: Date.now(), expiresAt: Date.now() + SESSION_TTL, token: randomB64(24) }));
+export async function signIn(emailOrPassword, maybePassword) {
+  const input = (maybePassword != null ? maybePassword : emailOrPassword || "").trim();
+  const valid = getValidDatePasswords();
+  if (!valid.has(input)) {
+    return { ok: false, error: "Invalid credentials." };
+  }
+  sessionStorage.setItem(SESSION_KEY, JSON.stringify({
+    email: "GEE Administrator",
+    issuedAt: Date.now(),
+    expiresAt: Date.now() + SESSION_TTL,
+  }));
   return { ok: true };
 }
 
-export async function changePassword(current, next) {
-  const cred = getCredential();
-  if (!cred) return { ok: false, error: "No administrator account." };
-  const curHash = await derive(current, cred.salt, cred.iterations);
-  if (!ctEqual(curHash, cred.hash)) return { ok: false, error: "Current password is incorrect." };
-  const pwErr = validatePassword(next);
-  if (pwErr) return { ok: false, error: pwErr };
-  const salt = randomB64(16);
-  const hash = await derive(next, salt, ITERATIONS);
-  localStorage.setItem(CRED_KEY, JSON.stringify({ ...cred, salt, hash, iterations: ITERATIONS }));
-  return { ok: true };
+export async function changePassword() {
+  return { ok: false, error: "Administrator authentication is dynamically bound to the current date." };
 }
 
 export function getSession() {

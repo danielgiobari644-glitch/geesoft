@@ -97,8 +97,6 @@ export function mountAdmin(root) {
 
 /* ============================================================ AUTH GATE */
 function renderAuth() {
-  const provisioned = isProvisioned();
-  const mode = provisioned ? "login" : "setup";
   rootRef.innerHTML = `
   <div class="auth-screen">
     <div class="grid-bg mask-fade" style="position:absolute;inset:0;pointer-events:none"></div>
@@ -109,17 +107,14 @@ function renderAuth() {
         <span><b class="font-display" style="display:block;font-size:15px;letter-spacing:.16em;color:var(--paper)">GEE ADMIN</b><small class="font-mono" style="display:block;margin-top:4px;font-size:9px;letter-spacing:.18em;color:var(--mute-2);text-transform:uppercase">Protected area</small></span>
       </a>
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px">
-        <span style="display:grid;place-items:center;height:40px;width:40px;border-radius:12px;border:1px solid rgba(77,124,255,.3);background:rgba(77,124,255,.1);color:var(--accent)">${icon(provisioned ? "lock" : "shield", 18)}</span>
-        <div><h1 class="font-display" style="font-size:18px;font-weight:700;color:var(--paper);margin:0">${provisioned ? "Administrator sign-in" : "Provision administrator"}</h1><p style="font-size:12.5px;color:var(--mute);margin:4px 0 0">${provisioned ? "Authorized access only." : "No admin account exists on this device yet."}</p></div>
+        <span style="display:grid;place-items:center;height:40px;width:40px;border-radius:12px;border:1px solid rgba(77,124,255,.3);background:rgba(77,124,255,.1);color:var(--accent)">${icon("lock", 18)}</span>
+        <div><h1 class="font-display" style="font-size:18px;font-weight:700;color:var(--paper);margin:0">Administrator sign-in</h1><p style="font-size:12.5px;color:var(--mute);margin:4px 0 0">Authorized access only.</p></div>
       </div>
       <form id="authForm" style="display:flex;flex-direction:column;gap:16px">
-        <label class="field"><span class="field__label">Email</span><input class="input" type="email" id="aEmail" required placeholder="admin@gee.dev" value="${provisioned ? escapeHtml(getCredential()?.email || "") : ""}"/></label>
-        <label class="field"><span class="field__label">Password</span><input class="input" type="password" id="aPw" required placeholder="••••••••"/></label>
-        ${!provisioned ? `<label class="field"><span class="field__label">Confirm password</span><input class="input" type="password" id="aPw2" required placeholder="••••••••"/></label>` : ""}
+        <label class="field"><span class="field__label">Password</span><input class="input" type="password" id="aPw" required autofocus placeholder="••••••••"/></label>
         <div id="aErr" class="err" style="display:none"></div>
-        <button class="btn btn--primary btn--lg" type="submit" id="aSubmit" style="width:100%">${icon("lock", 15)} ${provisioned ? "Sign in" : "Create account & sign in"}</button>
+        <button class="btn btn--primary btn--lg" type="submit" id="aSubmit" style="width:100%">${icon("lock", 15)} Sign in</button>
       </form>
-      <p style="margin:24px 0 0;border-top:1px solid var(--line);padding-top:20px;font-size:12px;line-height:1.6;color:var(--mute-2)">Credentials are never stored in the source code. The password is hashed with PBKDF2-SHA256 (210,000 iterations) and a random salt before it is written to this device; only the derived hash is kept.</p>
       <div style="margin-top:20px;display:flex;justify-content:space-between;align-items:center;font-size:12.5px">
         <a href="/" style="display:inline-flex;align-items:center;gap:6px;color:var(--mute)"><span style="display:inline-block;transform:rotate(180deg)">${icon("arrow", 13)}</span> Back to website</a>
       </div>
@@ -130,24 +125,17 @@ function renderAuth() {
   const submit = document.getElementById("aSubmit");
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const email = document.getElementById("aEmail").value;
     const pw = document.getElementById("aPw").value;
     errEl.style.display = "none";
     submit.disabled = true;
     submit.innerHTML = spinner(16) + " Working…";
-    let res;
-    if (provisioned) {
-      res = await signIn(email, pw);
-    } else {
-      const pw2 = document.getElementById("aPw2").value;
-      if (pw !== pw2) { res = { ok: false, error: "Passwords do not match." }; }
-      else { const p = await provisionAdmin(email, pw); if (!p.ok) res = p; else res = await signIn(email, pw); }
-    }
+    const res = await signIn(pw);
     if (!res.ok) {
-      errEl.textContent = res.error || "Sign-in failed.";
+      errEl.textContent = res.error || "Invalid credentials.";
       errEl.style.display = "block";
       submit.disabled = false;
-      submit.innerHTML = icon("lock", 15) + (provisioned ? " Sign in" : " Create account & sign in");
+      submit.innerHTML = icon("lock", 15) + " Sign in";
+      document.getElementById("aPw").select();
     } else {
       toast("Signed in");
       renderShell();
@@ -630,48 +618,24 @@ function messagesPanel(c) {
 
 /* ============================================================ SETTINGS */
 function settingsPanel(c) {
-  const cred = getCredential();
-  const email = getSession()?.email || "";
+  const session = getSession();
   const d = getData();
-  let msg = "";
   c.innerHTML = `
-    <div class="panel-head"><div><h1>Settings & Security</h1><p>Administrator credentials and content backup.</p></div></div>
+    <div class="panel-head"><div><h1>Settings & Security</h1><p>Administrator session and content backup.</p></div></div>
     <div class="grid-2">
-      <div class="acard"><div class="acard__head"><h2>Administrator account</h2><p>The only account able to reach this dashboard.</p></div><div class="acard__body">
+      <div class="acard"><div class="acard__head"><h2>Administrator security</h2><p>Session and authentication status.</p></div><div class="acard__body">
         <div class="field-grid field-grid--2">
-          ${infoRow("Email", email)}${infoRow("Hash algorithm", "PBKDF2-SHA256")}${infoRow("Iterations", String(cred?.iterations || 0))}${infoRow("Last sign-in", cred?.lastLogin ? timeAgo(cred.lastLogin) : "—")}
+          ${infoRow("Account", session?.email || "GEE Administrator")}${infoRow("Session status", "Authenticated")}${infoRow("Security policy", "Dynamic Token")}${infoRow("Signed in", session?.issuedAt ? timeAgo(session.issuedAt) : "Just now")}
         </div>
-        <form id="pwForm" style="margin-top:20px;border-top:1px solid var(--line);padding-top:20px;display:flex;flex-direction:column;gap:16px">
-          ${field("Current password", `<input class="input" type="password" id="pwCur" required autocomplete="current-password"/>`)}
-          <div class="field-grid field-grid--2">${field("New password", `<input class="input" type="password" id="pwNew" required autocomplete="new-password"/>`)}${field("Confirm new password", `<input class="input" type="password" id="pwNew2" required autocomplete="new-password"/>`)}</div>
-          <div class="err" id="pwMsg">${escapeHtml(msg)}</div>
-          <button class="btn btn--primary btn--sm" type="submit" id="pwBtn">${icon("shield", 14)} Update password</button>
-        </form>
       </div></div>
       <div class="stack">
         <div class="acard"><div class="acard__head"><h2>Content backup</h2><p>Export the whole content set as JSON, or restore a previous export.</p></div><div class="acard__body">
           <div class="row-actions"><button class="btn btn--secondary btn--sm" id="expBtn">${icon("file", 14)} Export JSON</button><button class="btn btn--secondary btn--sm" id="impBtn">${icon("image", 14)} Import JSON</button><input type="file" id="impFile" accept="application/json" class="hidden"/></div>
           <p class="font-mono" style="margin:14px 0 0;font-size:11px;color:var(--mute-2)">${d.projects.length} projects · ${d.categories.length} categories · ${d.platforms.length} platforms</p>
         </div></div>
-        <div class="acard"><div class="acard__head"><h2>Danger zone</h2><p>Restore the original GEE content set. Your administrator account is not affected.</p></div><div class="acard__body"><button class="btn btn--danger btn--sm" id="resetBtn">${icon("trash", 14)} Reset all content</button></div></div>
+        <div class="acard"><div class="acard__head"><h2>Danger zone</h2><p>Restore the original GEE content set.</p></div><div class="acard__body"><button class="btn btn--danger btn--sm" id="resetBtn">${icon("trash", 14)} Reset all content</button></div></div>
       </div>
     </div>`;
-  document.getElementById("pwForm").addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const cur = document.getElementById("pwCur").value;
-    const next = document.getElementById("pwNew").value;
-    const next2 = document.getElementById("pwNew2").value;
-    const msgEl = document.getElementById("pwMsg");
-    if (next !== next2) { msgEl.textContent = "New passwords do not match."; return; }
-    const btn = document.getElementById("pwBtn");
-    btn.disabled = true; btn.innerHTML = spinner(14) + " Updating…";
-    const res = await changePassword(cur, next);
-    btn.disabled = false; btn.innerHTML = icon("shield", 14) + " Update password";
-    if (!res.ok) { msgEl.textContent = res.error || "Could not change password."; return; }
-    msgEl.textContent = "";
-    document.getElementById("pwForm").reset();
-    toast("Password updated");
-  });
   document.getElementById("expBtn").onclick = () => {
     const blob = new Blob([store.exportJson()], { type: "application/json" });
     const url = URL.createObjectURL(blob);
