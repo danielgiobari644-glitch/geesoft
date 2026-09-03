@@ -1,0 +1,51 @@
+rules_version = '2';
+
+// GeeSoft — Firestore Security Rules
+// Public visitors: READ ONLY on public portfolio content.
+// Writes: restricted to the authorised administrator account(s) listed in /admins/{uid}.
+//
+// SETUP (one time, in the Firebase console for project "geesoft10"):
+//   1. Authentication → Sign-in method → enable "Email/Password".
+//   2. Authentication → Users → "Add user" → create your admin email + a strong password.
+//      (The password is created in the console — never in this repo, never in Firestore.)
+//   3. Copy that user's UID.
+//   4. Firestore → create collection "admins" → document ID = that UID → any field, e.g. { role: "owner" }.
+//      Note: creating this doc requires temporarily using the console, which bypasses rules. Correct.
+//   5. Firestore → Rules → paste this file → Publish.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAdmin() {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    // Public site content: hero, intro, skillsMeta, projectsMeta, contact, settings
+    match /content/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /skills/{skillId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /projects/{projectId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Admin allow-list. Readable only by signed-in admins; never writable from the client.
+    match /admins/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow write: if false;
+    }
+
+    // Everything else is closed.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
