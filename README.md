@@ -22,11 +22,16 @@ firestore.rules     Security rules — public read, admin-only write
 Must be served over http (ES modules + Firebase):
 
 ```bash
-python3 -m http.server 8080
+python3 serve.py          # or: python3 serve.py 3000
 ```
 
-- Public site: `http://localhost:8080/`
-- Admin console: `http://localhost:8080/admin.html`  ← not linked anywhere on the public site
+- Public site:   `http://localhost:8080/`
+- Admin console: `http://localhost:8080/admin`  ← path only, never linked from the public site
+
+`serve.py` maps `/admin` → `admin.html`, matching production. Deploy configs for that
+same rewrite are included: `firebase.json` (Firebase Hosting), `vercel.json` (Vercel),
+`_redirects` (Netlify), `.htaccess` (Apache/cPanel). `robots.txt` keeps `/admin` out of
+search engines.
 
 ## One-time Firebase setup (required before login works)
 
@@ -38,6 +43,19 @@ python3 -m http.server 8080
 6. **Authentication → Settings → Authorized domains** → add your deployment domain.
 
 The admin password only ever exists inside Firebase Authentication. It is not in this repo, not in Firestore, and not in any client document.
+
+## Access model
+
+| Who | Public portfolio content | Admin writes | `/admins` allow-list |
+|---|---|---|---|
+| Anyone (not signed in) | **Read** | Denied | Denied |
+| Signed in, not allow-listed | **Read** | Denied | Denied |
+| Administrator | Read | **Full write** | Reads own entry |
+
+`/admin` is a private *path*, not a security boundary — it appears in no navigation,
+button, link or CTA on the public site. The real protection is `firestore.rules`:
+writes require a signed-in, email/password user whose UID exists in the `admins`
+collection. Finding the URL, or even creating an account, grants nothing.
 
 ## Firestore data model
 

@@ -1,0 +1,5 @@
+RewriteEngine On
+RewriteRule ^admin/?$ admin.html [L]
+<Files "admin.html">
+  Header set X-Robots-Tag "noindex, nofollow, noarchive"
+</Files>
