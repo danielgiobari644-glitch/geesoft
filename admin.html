@@ -65,6 +65,22 @@
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+<noscript><p style="color:#ff9b9b;text-align:center;padding:2rem">JavaScript is required for the management console.</p></noscript>
 <script type="module" src="admin.js"></script>
+<script>
+// If the module fails to load (blocked CDN / offline), tell the admin instead of showing a dead form.
+window.addEventListener("error", function (e) {
+  if (e.target && e.target.tagName === "SCRIPT") {
+    var m = document.getElementById("authMsg");
+    if (m) { m.className = "msg err"; m.textContent = "Could not load Firebase. Check your internet connection."; }
+  }
+}, true);
+setTimeout(function () {
+  if (!window.__geesoftAdminReady) {
+    var m = document.getElementById("authMsg");
+    if (m && !m.textContent) { m.className = "msg err"; m.textContent = "Could not reach Firebase. Check your connection, then reload."; }
+  }
+}, 9000);
+</script>
 </body>
 </html>

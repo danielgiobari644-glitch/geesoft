@@ -1,9 +1,11 @@
-// GeeSoft — public site logic. All content is loaded live from Firestore.
-import { db } from "./firebase.js";
+// GeeSoft — public site logic.
+// Content is loaded live from Firestore, but the site renders and is fully
+// usable BEFORE/WITHOUT Firebase: navigation, animation, modal and layout all
+// work offline. Firebase is loaded dynamically so a blocked CDN or a project
+// that has not been configured yet can never blank the page.
 import { DEFAULTS, merge } from "./content.js";
-import {
-  collection, doc, getDocs, onSnapshot, query, orderBy
-} from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
+
+document.documentElement.classList.add("js-ready");
 
 const $  = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -293,8 +295,29 @@ function rerender() {
   applyBindings(); renderHero(); renderIntro(); renderContact(); observeReveals();
 }
 
+// Render immediately from defaults, then upgrade with live Firestore data.
 function boot() {
+  // Safety: guarantee no overlay is blocking the page and scrolling is free.
+  const m = document.getElementById("projectModal");
+  const n = document.getElementById("mobileNav");
+  if (m) m.hidden = true;
+  if (n) { n.hidden = true; n.classList.remove("open"); }
+  document.body.style.overflow = "";
+
   rerender(); renderSkills(); renderProjects();
+  connectFirebase();
+}
+
+async function connectFirebase() {
+  let db, doc, collection, getDocs, onSnapshot, query, orderBy;
+  try {
+    ({ db } = await import("./firebase.js"));
+    ({ collection, doc, getDocs, onSnapshot, query, orderBy } =
+      await import("https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js"));
+  } catch (err) {
+    console.warn("Live content unavailable (offline or Firebase blocked). Showing built-in content.", err?.message || err);
+    return; // site stays fully functional on defaults
+  }
 
   DOCS.forEach(([col, id, key]) => {
     onSnapshot(doc(db, col, id), snap => {

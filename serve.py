@@ -12,11 +12,18 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 
 
 class Handler(SimpleHTTPRequestHandler):
-    def do_GET(self):
+    def _rewrite(self):
         path = self.path.split("?", 1)[0].rstrip("/")
-        if path == "/admin":
+        if path in ("/admin", "/admin.html"):
             self.path = "/admin.html"
+
+    def do_GET(self):
+        self._rewrite()
         return super().do_GET()
+
+    def do_HEAD(self):
+        self._rewrite()
+        return super().do_HEAD()
 
     def end_headers(self):
         if self.path.startswith("/admin"):
