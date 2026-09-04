@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """GeeSoft local dev server.
 
-Serves the flat project and maps the clean path /admin -> admin.html,
+Serves the project and maps the clean path /admin -> admin/index.html,
 matching the rewrite used in production (Firebase Hosting / Vercel / Apache).
 
     python3 serve.py            # http://localhost:8080
@@ -13,9 +13,10 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 
 class Handler(SimpleHTTPRequestHandler):
     def _rewrite(self):
+        # Mirrors static-host clean URLs: /admin -> /admin/index.html
         path = self.path.split("?", 1)[0].rstrip("/")
-        if path in ("/admin", "/admin.html"):
-            self.path = "/admin.html"
+        if path == "/admin":
+            self.path = "/admin/index.html"
 
     def do_GET(self):
         self._rewrite()
@@ -35,8 +36,13 @@ class Handler(SimpleHTTPRequestHandler):
         sys.stderr.write("%s %s\n" % (self.address_string(), fmt % args))
 
 
+class Server(ThreadingHTTPServer):
+    allow_reuse_address = True
+    daemon_threads = True
+
+
 if __name__ == "__main__":
     port = int(sys.argv[1]) if len(sys.argv) > 1 else 8080
     print(f"GeeSoft  →  http://localhost:{port}/        (public site)")
     print(f"Console  →  http://localhost:{port}/admin   (private)")
-    ThreadingHTTPServer(("0.0.0.0", port), Handler).serve_forever()
+    Server(("0.0.0.0", port), Handler).serve_forever()

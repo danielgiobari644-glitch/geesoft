@@ -1,5 +1,6 @@
-RewriteEngine On
-RewriteRule ^admin/?$ admin.html [L]
-<Files "admin.html">
+# Apache/cPanel only. Serves admin/index.html at /admin — no redirect, no loop.
+DirectoryIndex index.html
+Options -MultiViews
+<Files "index.html">
   Header set X-Robots-Tag "noindex, nofollow, noarchive"
 </Files>

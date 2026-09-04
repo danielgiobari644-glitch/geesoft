@@ -28,10 +28,20 @@ python3 serve.py          # or: python3 serve.py 3000
 - Public site:   `http://localhost:8080/`
 - Admin console: `http://localhost:8080/admin`  ← path only, never linked from the public site
 
-`serve.py` maps `/admin` → `admin.html`, matching production. Deploy configs for that
-same rewrite are included: `firebase.json` (Firebase Hosting), `vercel.json` (Vercel),
-`_redirects` (Netlify), `.htaccess` (Apache/cPanel). `robots.txt` keeps `/admin` out of
-search engines.
+`serve.py` maps `/admin` → `admin.html`, matching production.
+
+### Deploying — the `/admin` path per host
+
+| Host | What to do | Why |
+|---|---|---|
+| **Cloudflare Pages** | **Nothing.** Just deploy the folder. | Pages has clean URLs built in: `admin.html` is automatically served at `/admin`, and `/admin.html` 301-redirects to `/admin`. Adding a `_redirects` rule for `/admin` fights that and causes **ERR_TOO_MANY_REDIRECTS**. Do not add one. |
+| **Netlify** | Nothing. | Same automatic clean-URL ("pretty URL") behaviour. |
+| **Firebase Hosting** | Deploy with `firebase.json`. | `cleanUrls: true` handles it. |
+| **Vercel** | Deploy with `vercel.json`. | `cleanUrls: true` handles it. |
+| **Apache / cPanel** | Upload `.htaccess`. | Apache has no clean URLs, so the rewrite is required. |
+
+`_headers` (Cloudflare/Netlify) sets `noindex` + `no-store` on the admin page.
+`robots.txt` keeps `/admin` out of search engines.
 
 ## One-time Firebase setup (required before login works)
 

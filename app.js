@@ -312,7 +312,7 @@ function boot() {
 async function connectFirebase() {
   let db, doc, collection, getDocs, onSnapshot, query, orderBy;
   try {
-    ({ db } = await import("./firebase.js"));
+    ({ db } = await import("/firebase.js"));
     ({ collection, doc, getDocs, onSnapshot, query, orderBy } =
       await import("https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js"));
   } catch (err) {
