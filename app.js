@@ -305,6 +305,7 @@ function boot() {
   document.body.style.overflow = "";
 
   rerender(); renderSkills(); renderProjects();
+  spotlight();
   connectFirebase();
 }
 
@@ -352,4 +353,23 @@ async function connectFirebase() {
     } catch (_) { renderProjects(); }
   });
 }
+// Cursor-follow spotlight on cards (pointer devices only, rAF-throttled).
+function spotlight() {
+  if (!matchMedia("(hover:hover) and (pointer:fine)").matches) return;
+  if (matchMedia("(prefers-reduced-motion:reduce)").matches) return;
+  let queued = false;
+  document.addEventListener("pointermove", e => {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(() => {
+      queued = false;
+      const card = e.target.closest?.(".panel,.proj");
+      if (!card) return;
+      const r = card.getBoundingClientRect();
+      card.style.setProperty("--mx", (e.clientX - r.left) + "px");
+      card.style.setProperty("--my", (e.clientY - r.top) + "px");
+    });
+  }, { passive: true });
+}
+
 boot();

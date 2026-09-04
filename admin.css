@@ -127,3 +127,28 @@ button,input,textarea,select{font:inherit;color:inherit}
   .topbar{padding:.8rem 1rem}
   .auth__card{padding:1.8rem 1.2rem}
 }
+
+/* ---------- modern layer ---------- */
+:root{--display:"Sora","Inter",sans-serif;
+  --spring:linear(0,.006,.025 2.8%,.101 6.1%,.539 18.9%,.721 25.3%,.849 31.5%,.937 38.1%,.968 41.8%,.991 45.7%,1.006 50.1%,1.015 55%,1.017 63.9%,1.001 100%)}
+h1,h2,h3,h4,.auth__title,.stat b,.side__brand strong{font-family:var(--display)}
+.btn,.tab,.item{transition-timing-function:var(--spring)}
+.btn--primary:hover{transform:translateY(-2px)}
+.btn:active{transform:translateY(1px) scale(.985)}
+.tab{position:relative}
+.tab.is-active::before{content:"";position:absolute;left:0;top:20%;bottom:20%;width:3px;border-radius:3px;
+  background:linear-gradient(180deg,#1f7bff,#5fe1ff)}
+.card{transition:border-color .35s var(--spring),transform .35s var(--spring)}
+.card:hover{border-color:var(--line-2)}
+.item{transition:transform .3s var(--spring),border-color .3s}
+.item:hover{transform:translateX(3px);border-color:var(--line-2)}
+.stat{transition:transform .35s var(--spring),border-color .35s}
+.stat:hover{transform:translateY(-3px);border-color:var(--line-2)}
+.mdl__panel{animation:mdlIn .4s var(--spring)}
+@keyframes mdlIn{from{opacity:0;transform:translateY(20px) scale(.97)}}
+.auth__card{animation:mdlIn .5s var(--spring)}
+*{scrollbar-width:thin;scrollbar-color:rgba(80,150,240,.45) transparent}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-track{background:#05090f}
+::-webkit-scrollbar-thumb{background:#173a68;border-radius:8px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
