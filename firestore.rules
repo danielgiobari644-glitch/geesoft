@@ -1,81 +1,73 @@
 rules_version = '2';
 
 // ============================================================
-// GeeSoft — Firestore Security Rules
+// Giobari Daniel — Portfolio · Firestore security rules
+// ------------------------------------------------------------
+// Public visitors:  read published content only, may submit a
+//                   contact message (create-only, validated).
+// Admin (signed in): full read/write on portfolio content.
+//
+// Deploy: Firebase Console → Firestore Database → Rules → paste
+// this file → Publish.  (Or: firebase deploy --only firestore:rules)
 // ============================================================
-// ANYONE can READ the portfolio content (that is what makes the
-// public website work for every visitor, signed in or not).
-//
-// ONLY the authorised administrator can WRITE anything, and only
-// the administrator can read the private admin collections.
-//
-// The admin page itself lives at the /admin path. Hiding that path
-// is NOT the security boundary — these rules are. Even if someone
-// finds /admin, signs up, or calls Firestore directly from a
-// console, they cannot change a single field unless their UID is
-// in the /admins allow-list below.
-// ============================================================
-//
-// ONE-TIME SETUP in the Firebase console (project "geesoft10"):
-//   1. Authentication → Sign-in method → enable "Email/Password".
-//      Leave every other provider disabled.
-//   2. Authentication → Users → "Add user" → your admin email and a
-//      strong password. (Created in the console — the password never
-//      touches this repo or Firestore.)
-//   3. Copy that user's UID.
-//   4. Firestore → collection "admins" → document ID = that UID →
-//      field: role = "owner".
-//   5. Firestore → Rules → paste this file → Publish.
-//
-// To revoke admin access later, delete that document in /admins.
 
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // ---------- helpers ----------
-
-    // True only for a signed-in user whose UID is in the allow-list.
     function isAdmin() {
-      return request.auth != null
-        && request.auth.token.firebase.sign_in_provider == 'password'
-        && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+      return request.auth != null;
     }
 
-    // ---------- PUBLIC PORTFOLIO CONTENT ----------
-    // Read: open to the whole world (the public site needs it).
-    // Write: administrator only.
+    function validMessage() {
+      return request.resource.data.name is string
+        && request.resource.data.name.size() >= 2
+        && request.resource.data.name.size() <= 80
+        && request.resource.data.email is string
+        && request.resource.data.email.matches('^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$')
+        && request.resource.data.message is string
+        && request.resource.data.message.size() >= 10
+        && request.resource.data.message.size() <= 2000
+        && (!('phone' in request.resource.data) || request.resource.data.phone is string)
+        && request.resource.data.phone.size() <= 40
+        && request.resource.data.read == false
+        && request.resource.data.keys().hasOnly(['name', 'email', 'phone', 'message', 'read', 'createdAt']);
+    }
 
-    // Hero, Introduction, Skills/Projects section text,
-    // Contact details, Site settings, navigation labels.
-    match /content/{docId} {
-      allow read:  if true;
+    // Site-wide settings (single document: settings/general)
+    match /settings/{docId} {
+      allow read: if true;
       allow write: if isAdmin();
     }
 
-    match /skills/{skillId} {
-      allow read:  if true;
-      allow write: if isAdmin();
-    }
-
+    // Portfolio projects
     match /projects/{projectId} {
-      allow read:  if true;
-      allow write: if isAdmin();
+      allow read: if isAdmin() || resource.data.published == true;
+      allow create, update, delete: if isAdmin();
     }
 
-    // ---------- PRIVATE ADMIN DATA ----------
-    // Not public. An admin may read only their own allow-list entry.
-    // Nobody can write it from a client — membership is granted
-    // exclusively from the Firebase console.
-    match /admins/{uid} {
-      allow read:   if request.auth != null && request.auth.uid == uid;
-      allow write:  if false;
+    // Services
+    match /services/{serviceId} {
+      allow read: if isAdmin() || resource.data.published == true;
+      allow create, update, delete: if isAdmin();
     }
 
-    // ---------- EVERYTHING ELSE ----------
-    // Closed by default. Any collection not named above is denied,
-    // for reads and writes, to everyone.
-    match /{document=**} {
-      allow read, write: if false;
+    // Skills
+    match /skills/{skillId} {
+      allow read: if isAdmin() || resource.data.published == true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    // Testimonials
+    match /testimonials/{testimonialId} {
+      allow read: if isAdmin() || resource.data.published == true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    // Contact messages: anyone may send one; only the admin can read,
+    // mark read/unread or delete them.
+    match /messages/{messageId} {
+      allow create: if validMessage();
+      allow read, update, delete: if isAdmin();
     }
   }
 }

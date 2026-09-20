@@ -1,89 +1,400 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta name="robots" content="noindex,nofollow,noarchive" />
-<title>Management Console</title>
-<link rel="icon" href="./favicon.png" type="image/png" />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" />
-<link rel="stylesheet" href="admin.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Admin · Giobari Daniel Portfolio</title>
+  <meta name="description" content="Portfolio management dashboard.">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Crect%20width='64'%20height='64'%20rx='14'%20fill='%230A0B0E'/%3E%3Ctext%20x='32'%20y='43'%20font-family='Arial'%20font-size='32'%20font-weight='700'%20fill='%23E9A23B'%20text-anchor='middle'%3EG%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="admin.css">
 </head>
 <body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <defs>
+      <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol>
+      <symbol id="i-folder" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></symbol>
+      <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3l1.9 5.8L20 11l-6.1 2.2L12 19l-1.9-5.8L4 11l6.1-2.2L12 3z"/></symbol>
+      <symbol id="i-award" viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M15.5 13l1.5 9-5-3-5 3 1.5-9"/></symbol>
+      <symbol id="i-message" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></symbol>
+      <symbol id="i-inbox" viewBox="0 0 24 24"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></symbol>
+      <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></symbol>
+      <symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></symbol>
+      <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+      <symbol id="i-edit" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></symbol>
+      <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6M10 11v6M14 11v6"/></symbol>
+      <symbol id="i-up" viewBox="0 0 24 24"><path d="M18 15l-6-6-6 6"/></symbol>
+      <symbol id="i-down" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+      <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></symbol>
+      <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+      <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+      <symbol id="i-external" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></symbol>
+      <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></symbol>
+      <symbol id="i-phone" viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.9.5 2.8.7a2 2 0 0 1 1.7 2z"/></symbol>
+      <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.5 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.5 15"/></symbol>
+      <symbol id="i-seed" viewBox="0 0 24 24"><path d="M12 22V12M12 12C12 6 8 3 3 3c0 6 4 9 9 9zM12 12c0-5 4-8 9-8 0 6-4 8-9 8z"/></symbol>
+    </defs>
+  </svg>
 
-<!-- LOGIN -->
-<div class="auth" id="authView">
-  <form class="auth__card" id="loginForm" novalidate>
-    <img src="./favicon.png" alt="" class="auth__logo" width="52" height="52" />
-    <h1 class="auth__title">Management Console</h1>
-    <p class="auth__sub">Authorised access only. Sign in with your account.</p>
-    <div class="f">
-      <label for="li-email">Email</label>
-      <input id="li-email" type="email" autocomplete="username" required />
+  <!-- ============ LOGIN ============ -->
+  <div class="login-wrap" id="login-view">
+    <div class="login-card">
+      <div class="login-brand">Giobari Daniel <small class="mono" style="color:var(--faint);font-size:10px;letter-spacing:.2em">ADMIN</small></div>
+      <h1>Welcome back</h1>
+      <p>Sign in to manage your portfolio.</p>
+      <form id="login-form" novalidate>
+        <div class="field">
+          <label for="lg-email">Email</label>
+          <input id="lg-email" type="email" autocomplete="username" required>
+        </div>
+        <div class="field">
+          <label for="lg-pass">Password</label>
+          <input id="lg-pass" type="password" autocomplete="current-password" required>
+        </div>
+        <p class="err-text" id="login-err" role="alert" style="display:none;color:var(--bad);font-size:13.5px;margin:-4px 0 14px"></p>
+        <button class="btn btn-primary" type="submit" id="login-btn" style="width:100%"><span>Sign In</span></button>
+      </form>
+      <button type="button" class="btn-link" id="forgot-btn" style="margin-top:14px;color:var(--muted);font-size:13px;text-decoration:underline;text-underline-offset:3px">Forgot password?</button>
+      <div class="login-hint">
+        <b>First time here?</b> Create your admin account in the Firebase Console
+        (Authentication &rarr; Sign-in method &rarr; Email/Password &rarr; Users &rarr; Add user),
+        deploy <code class="mono">firestore.rules</code>, then sign in with that account.
+      </div>
     </div>
-    <div class="f">
-      <label for="li-pass">Password</label>
-      <input id="li-pass" type="password" autocomplete="current-password" required />
+  </div>
+
+  <!-- ============ APP ============ -->
+  <div id="app-view" hidden>
+    <div class="topbar">
+      <button class="icon-btn" id="sb-toggle" aria-label="Open navigation"><svg class="icon"><use href="#i-menu"/></svg></button>
+      <span class="topbar-title" id="topbar-title">Dashboard</span>
+      <span class="grow"></span>
+      <a class="icon-btn" href="index.html" target="_blank" rel="noopener" aria-label="Preview site" title="Preview site"><svg class="icon"><use href="#i-external"/></svg></a>
     </div>
-    <button class="btn btn--primary btn--full" type="submit" id="loginBtn">Sign in</button>
-    <button class="linkbtn" type="button" id="resetBtn">Send password reset email</button>
-    <p class="msg" id="authMsg" role="status" aria-live="polite"></p>
-  </form>
-</div>
 
-<!-- DASHBOARD -->
-<div class="app" id="appView" hidden>
-  <aside class="side" id="side">
-    <div class="side__brand">
-      <img src="./favicon.png" alt="" width="34" height="34" />
-      <div><strong>GeeSoft</strong><span>Console</span></div>
+    <aside class="sidebar" id="sidebar" aria-label="Admin navigation">
+      <div class="sb-brand">Giobari Daniel <small class="mono">ADMIN&nbsp;PANEL</small></div>
+      <nav class="snav" id="snav">
+        <button type="button" data-nav="dashboard" class="active"><svg class="icon"><use href="#i-grid"/></svg>Dashboard</button>
+        <button type="button" data-nav="projects"><svg class="icon"><use href="#i-folder"/></svg>Projects</button>
+        <button type="button" data-nav="services"><svg class="icon"><use href="#i-spark"/></svg>Services</button>
+        <button type="button" data-nav="skills"><svg class="icon"><use href="#i-award"/></svg>Skills</button>
+        <button type="button" data-nav="testimonials"><svg class="icon"><use href="#i-message"/></svg>Testimonials</button>
+        <button type="button" data-nav="messages"><svg class="icon"><use href="#i-inbox"/></svg>Messages<span class="sb-badge" id="unread-badge" hidden>0</span></button>
+        <button type="button" data-nav="settings"><svg class="icon"><use href="#i-sliders"/></svg>Settings</button>
+      </nav>
+      <div class="sb-foot">
+        <a class="btn btn-ghost btn-sm" href="index.html" target="_blank" rel="noopener"><svg class="icon"><use href="#i-external"/></svg>Preview portfolio</a>
+        <div class="sb-user"><span class="ava" id="sb-ava">G</span><span><b id="sb-email">admin</b>signed in</span></div>
+        <button class="btn btn-ghost btn-sm" id="logout-btn" type="button"><svg class="icon"><use href="#i-logout"/></svg>Sign out</button>
+      </div>
+      <button class="icon-btn sb-back" id="sb-close" aria-label="Close navigation"><svg class="icon"><use href="#i-x"/></svg></button>
+    </aside>
+
+    <main class="main" id="main">
+      <!-- ======== DASHBOARD ======== -->
+      <section class="panel active" data-panel="dashboard">
+        <div class="panel-head">
+          <div><h2>Dashboard</h2><p class="sub" id="dash-sub">Overview of your portfolio content.</p></div>
+        </div>
+        <div class="setup" id="setup-card" hidden>
+          <h3>Getting started</h3>
+          <p>A few things to finish setting up your portfolio:</p>
+          <ol id="setup-steps"></ol>
+          <button class="btn btn-primary btn-sm" id="seed-btn" type="button"><svg class="icon"><use href="#i-seed"/></svg>Load sample content</button>
+          <span class="small muted" style="margin-left:10px">Sample projects and services you can edit or delete.</span>
+        </div>
+        <div class="stat-grid" id="stat-grid"></div>
+        <div class="qa-grid">
+          <button class="btn btn-primary btn-sm" data-goto="projects" data-new="1" type="button"><svg class="icon"><use href="#i-plus"/></svg>Add project</button>
+          <button class="btn btn-ghost btn-sm" data-goto="settings" type="button"><svg class="icon"><use href="#i-edit"/></svg>Edit settings</button>
+          <a class="btn btn-ghost btn-sm" href="index.html" target="_blank" rel="noopener"><svg class="icon"><use href="#i-eye"/></svg>Preview site</a>
+        </div>
+        <div class="dash-cols">
+          <div class="card">
+            <h3>Recent projects <button type="button" data-goto="projects">Manage &rarr;</button></h3>
+            <div id="dash-projects"></div>
+          </div>
+          <div class="card">
+            <h3>Recent messages <button type="button" data-goto="messages">Open inbox &rarr;</button></h3>
+            <div id="dash-messages"></div>
+          </div>
+        </div>
+      </section>
+      <!-- ======== PROJECTS ======== -->
+      <section class="panel" data-panel="projects">
+        <div id="projects-list-view">
+          <div class="panel-head">
+            <div><h2>Projects</h2><p class="sub" id="projects-sub">Digital products and visual design work shown on the site.</p></div>
+            <button class="btn btn-primary btn-sm" id="new-project-btn" type="button"><svg class="icon"><use href="#i-plus"/></svg>Add project</button>
+          </div>
+          <div id="projects-list"></div>
+        </div>
+        <div id="project-editor" hidden>
+          <div class="editor-head">
+            <button class="icon-btn" id="proj-back" type="button" aria-label="Back to list"><svg class="icon"><use href="#i-up" style="transform:rotate(-90deg)"/></svg></button>
+            <h2 id="proj-editor-title">New project</h2>
+          </div>
+          <form id="proj-form" novalidate>
+            <fieldset><legend>Basics</legend>
+              <div class="fgrid">
+                <div class="field"><label for="pf-title">Title *</label><input id="pf-title" required></div>
+                <div class="field"><label for="pf-slug">Slug <small>(URL, auto-generated)</small></label><input id="pf-slug" placeholder="my-project"></div>
+                <div class="field"><label for="pf-category">Category</label>
+                  <select id="pf-category">
+                    <option>Software</option><option>Websites</option><option>Web Apps</option><option>Church</option>
+                    <option>School</option><option>Business</option><option>Community</option><option>Graphic Design</option>
+                    <option>Branding</option><option>Media</option><option>Other</option>
+                  </select>
+                </div>
+                <div class="field"><label for="pf-year">Year</label><input id="pf-year" placeholder="2025" maxlength="12"></div>
+                <div class="field"><label for="pf-client">Client / Organization</label><input id="pf-client" placeholder="Optional"></div>
+                <div class="field"><label for="pf-order">Sort order <small>(lower shows first)</small></label><input id="pf-order" type="number" step="1" value="100"></div>
+              </div>
+            </fieldset>
+            <fieldset><legend>Images (external URLs)</legend>
+              <div class="field"><label for="pf-thumb">Thumbnail URL *</label><input id="pf-thumb" placeholder="https://... (externally hosted image)" required>
+                <p class="hint">Paste a link to an image hosted anywhere online (e.g. Cloudinary, Imgur, your hosting). Firebase Storage is intentionally not used.</p>
+                <img id="pf-thumb-preview" alt="" style="margin-top:10px;max-height:150px;border-radius:10px;border:1px solid var(--line);display:none">
+              </div>
+              <div class="field"><label for="pf-gallery">Gallery URLs <small>(one per line)</small></label><textarea id="pf-gallery" placeholder="https://&#10;https://"></textarea></div>
+            </fieldset>
+            <fieldset><legend>Summary</legend>
+              <div class="field"><label for="pf-desc">Short description *</label><textarea id="pf-desc" required></textarea></div>
+              <div class="field"><label for="pf-tech">Technologies / tools <small>(comma separated)</small></label><input id="pf-tech" placeholder="HTML, CSS, JavaScript, Firebase"></div>
+            </fieldset>
+            <fieldset><legend>Case study</legend>
+              <div class="field"><label for="pf-overview">Overview</label><textarea id="pf-overview"></textarea></div>
+              <div class="field"><label for="pf-problem">The problem</label><textarea id="pf-problem"></textarea></div>
+              <div class="field"><label for="pf-solution">The solution</label><textarea id="pf-solution"></textarea></div>
+              <div class="field"><label for="pf-built">What I built</label><textarea id="pf-built"></textarea></div>
+              <div class="field"><label for="pf-features">Features <small>(one per line)</small></label><textarea id="pf-features"></textarea></div>
+              <div class="field"><label for="pf-design">Design work</label><textarea id="pf-design"></textarea></div>
+              <div class="field"><label for="pf-results">Results / outcome</label><textarea id="pf-results"></textarea></div>
+            </fieldset>
+            <fieldset><legend>Links &amp; visibility</legend>
+              <div class="fgrid">
+                <div class="field"><label for="pf-live">Live website URL</label><input id="pf-live" type="url" placeholder="https://"></div>
+                <div class="field"><label for="pf-github">GitHub URL</label><input id="pf-github" type="url" placeholder="https://github.com/"></div>
+                <div class="field fspan"><div class="row" style="gap:26px;flex-wrap:wrap;padding-top:4px">
+                  <label class="check"><input type="checkbox" id="pf-published" checked> Published</label>
+                  <label class="check"><input type="checkbox" id="pf-featured"> Featured</label>
+                  <label class="check"><input type="checkbox" id="pf-sample"> Mark as sample content</label>
+                </div></div>
+              </div>
+            </fieldset>
+            <div class="editor-actions">
+              <button class="btn btn-primary" type="submit" id="proj-save"><span>Save project</span></button>
+              <button class="btn btn-ghost" type="button" id="proj-cancel">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- ======== SERVICES ======== -->
+      <section class="panel" data-panel="services">
+        <div id="services-list-view">
+          <div class="panel-head">
+            <div><h2>Services</h2><p class="sub">What you offer, shown in the services section.</p></div>
+            <button class="btn btn-primary btn-sm" id="new-service-btn" type="button"><svg class="icon"><use href="#i-plus"/></svg>Add service</button>
+          </div>
+          <div id="services-list"></div>
+        </div>
+        <div id="service-editor" hidden>
+          <div class="editor-head">
+            <button class="icon-btn" id="srv-back" type="button" aria-label="Back to list"><svg class="icon"><use href="#i-up" style="transform:rotate(-90deg)"/></svg></button>
+            <h2 id="srv-editor-title">New service</h2>
+          </div>
+          <form id="srv-form" novalidate>
+            <div class="field"><label for="sf-title">Title *</label><input id="sf-title" required></div>
+            <div class="field"><label for="sf-desc">Description *</label><textarea id="sf-desc" required></textarea></div>
+            <div class="fgrid">
+              <div class="field"><label for="sf-icon">Icon</label>
+                <select id="sf-icon">
+                  <option value="code">Code (software)</option><option value="globe">Globe (websites)</option>
+                  <option value="layers">Layers (web apps)</option><option value="pen">Pen (graphic design)</option>
+                  <option value="award">Award (branding)</option><option value="spark">Spark (custom)</option>
+                </select>
+              </div>
+              <div class="field"><label for="sf-order">Sort order</label><input id="sf-order" type="number" step="1" value="100"></div>
+            </div>
+            <label class="check" style="margin-bottom:18px"><input type="checkbox" id="sf-published" checked> Published</label>
+            <div class="editor-actions">
+              <button class="btn btn-primary" type="submit" id="srv-save"><span>Save service</span></button>
+              <button class="btn btn-ghost" type="button" id="srv-cancel">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- ======== SKILLS ======== -->
+      <section class="panel" data-panel="skills">
+        <div id="skills-list-view">
+          <div class="panel-head">
+            <div><h2>Skills</h2><p class="sub">Shown as chips, grouped by category.</p></div>
+            <button class="btn btn-primary btn-sm" id="new-skill-btn" type="button"><svg class="icon"><use href="#i-plus"/></svg>Add skill</button>
+          </div>
+          <div id="skills-list"></div>
+        </div>
+        <div id="skill-editor" hidden>
+          <div class="editor-head">
+            <button class="icon-btn" id="skl-back" type="button" aria-label="Back to list"><svg class="icon"><use href="#i-up" style="transform:rotate(-90deg)"/></svg></button>
+            <h2 id="skl-editor-title">New skill</h2>
+          </div>
+          <form id="skl-form" novalidate>
+            <div class="fgrid">
+              <div class="field"><label for="kf-name">Skill name *</label><input id="kf-name" required placeholder="e.g. JavaScript"></div>
+              <div class="field"><label for="kf-cat">Category <small>(group heading)</small></label><input id="kf-cat" placeholder="e.g. Development"></div>
+              <div class="field"><label for="kf-order">Sort order</label><input id="kf-order" type="number" step="1" value="100"></div>
+              <div class="field"><label for="kf-icon">Icon URL <small>(optional small image)</small></label><input id="kf-icon" type="url" placeholder="https://"></div>
+            </div>
+            <label class="check" style="margin-bottom:18px"><input type="checkbox" id="kf-published" checked> Published</label>
+            <div class="editor-actions">
+              <button class="btn btn-primary" type="submit" id="skl-save"><span>Save skill</span></button>
+              <button class="btn btn-ghost" type="button" id="skl-cancel">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- ======== TESTIMONIALS ======== -->
+      <section class="panel" data-panel="testimonials">
+        <div id="testimonials-list-view">
+          <div class="panel-head">
+            <div><h2>Testimonials</h2><p class="sub">Only real words from real people — the section stays hidden until you add one.</p></div>
+            <button class="btn btn-primary btn-sm" id="new-testimonial-btn" type="button"><svg class="icon"><use href="#i-plus"/></svg>Add testimonial</button>
+          </div>
+          <div id="testimonials-list"></div>
+        </div>
+        <div id="testimonial-editor" hidden>
+          <div class="editor-head">
+            <button class="icon-btn" id="tst-back" type="button" aria-label="Back to list"><svg class="icon"><use href="#i-up" style="transform:rotate(-90deg)"/></svg></button>
+            <h2 id="tst-editor-title">New testimonial</h2>
+          </div>
+          <form id="tst-form" novalidate>
+            <div class="field"><label for="tf-text">Testimonial text *</label><textarea id="tf-text" required></textarea></div>
+            <div class="fgrid">
+              <div class="field"><label for="tf-name">Client name *</label><input id="tf-name" required></div>
+              <div class="field"><label for="tf-role">Role / company</label><input id="tf-role" placeholder="e.g. Pastor, Grace Chapel"></div>
+              <div class="field"><label for="tf-avatar">Profile image URL</label><input id="tf-avatar" type="url" placeholder="https://"></div>
+              <div class="field"><label for="tf-order">Sort order</label><input id="tf-order" type="number" step="1" value="100"></div>
+            </div>
+            <label class="check" style="margin-bottom:18px"><input type="checkbox" id="tf-published" checked> Published</label>
+            <div class="editor-actions">
+              <button class="btn btn-primary" type="submit" id="tst-save"><span>Save testimonial</span></button>
+              <button class="btn btn-ghost" type="button" id="tst-cancel">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- ======== MESSAGES ======== -->
+      <section class="panel" data-panel="messages">
+        <div class="panel-head">
+          <div><h2>Messages</h2><p class="sub">Contact form submissions — new messages arrive here live.</p></div>
+          <div class="row">
+            <button class="fbtn" id="msg-filter-all" type="button" aria-pressed="true" style="border:1px solid var(--line2);padding:9px 15px;border-radius:999px;font-size:12.5px">All</button>
+            <button class="fbtn" id="msg-filter-unread" type="button" aria-pressed="false" style="border:1px solid var(--line2);padding:9px 15px;border-radius:999px;font-size:12.5px">Unread</button>
+            <button class="icon-btn" id="msg-refresh" type="button" aria-label="Refresh"><svg class="icon"><use href="#i-refresh"/></svg></button>
+          </div>
+        </div>
+        <div id="messages-list"></div>
+      </section>
+
+      <!-- ======== SETTINGS ======== -->
+      <section class="panel" data-panel="settings">
+        <div class="panel-head">
+          <div><h2>Settings</h2><p class="sub">Everything on the public site can be edited here — no code needed.</p></div>
+        </div>
+        <form id="settings-form" novalidate>
+          <fieldset><legend>Identity &amp; brand</legend>
+            <div class="fgrid">
+              <div class="field"><label for="st-name">Your name</label><input id="st-name"></div>
+              <div class="field"><label for="st-title">Professional title</label><input id="st-title"></div>
+              <div class="field"><label for="st-avail">Availability label <small>(leave empty to hide)</small></label><input id="st-avail" placeholder="e.g. Available for new projects"></div>
+              <div class="field"><label for="st-logo">Logo URL</label><input id="st-logo" type="url" placeholder="https://"></div>
+              <div class="field"><label for="st-favicon">Favicon URL</label><input id="st-favicon" type="url" placeholder="https://"></div>
+              <div class="field"><label for="st-profile">Profile image URL</label><input id="st-profile" type="url" placeholder="https://"></div>
+            </div>
+          </fieldset>
+          <fieldset><legend>Hero</legend>
+            <div class="field"><label for="st-hero-h">Hero heading</label><textarea id="st-hero-h"></textarea></div>
+            <div class="field"><label for="st-hero-d">Hero description</label><textarea id="st-hero-d"></textarea></div>
+            <div class="fgrid">
+              <div class="field"><label for="st-cta1">Primary CTA text</label><input id="st-cta1"></div>
+              <div class="field"><label for="st-cta2">Secondary CTA text</label><input id="st-cta2"></div>
+            </div>
+          </fieldset>
+          <fieldset><legend>About</legend>
+            <div class="field"><label for="st-about-h">About heading <small>(*word* renders in accent color)</small></label><input id="st-about-h"></div>
+            <div class="field"><label for="st-about-t">About text <small>(blank line = new paragraph)</small></label><textarea id="st-about-t" style="min-height:150px"></textarea></div>
+          </fieldset>
+          <fieldset><legend>Contact</legend>
+            <div class="field"><label for="st-c-h">Contact heading</label><input id="st-c-h"></div>
+            <div class="field"><label for="st-c-s">Contact sub-heading <small>(accent line)</small></label><input id="st-c-s"></div>
+            <div class="field"><label for="st-c-n">Contact note</label><input id="st-c-n"></div>
+            <div class="fgrid">
+              <div class="field"><label for="st-email">Email</label><input id="st-email" type="email"></div>
+              <div class="field"><label for="st-phone">Phone</label><input id="st-phone"></div>
+              <div class="field"><label for="st-wa">WhatsApp <small>(number or full link)</small></label><input id="st-wa"></div>
+            </div>
+          </fieldset>
+          <fieldset><legend>Social links <small>(empty = hidden)</small></legend>
+            <div class="fgrid">
+              <div class="field"><label for="st-so-ig">Instagram</label><input id="st-so-ig" type="url"></div>
+              <div class="field"><label for="st-so-tt">TikTok</label><input id="st-so-tt" type="url"></div>
+              <div class="field"><label for="st-so-tg">Telegram</label><input id="st-so-tg" type="url"></div>
+              <div class="field"><label for="st-so-yt">YouTube</label><input id="st-so-yt" type="url"></div>
+              <div class="field"><label for="st-so-gh">GitHub</label><input id="st-so-gh" type="url"></div>
+              <div class="field"><label for="st-so-li">LinkedIn</label><input id="st-so-li" type="url"></div>
+              <div class="field"><label for="st-so-wa">WhatsApp link</label><input id="st-so-wa"></div>
+              <div class="field"><label for="st-so-x">X / Twitter</label><input id="st-so-x" type="url"></div>
+            </div>
+            <div class="field"><label>Other links</label><div id="other-links" style="display:grid;gap:10px"></div>
+              <button class="btn btn-ghost btn-sm" type="button" id="add-other-link" style="margin-top:10px"><svg class="icon"><use href="#i-plus"/></svg>Add link</button>
+            </div>
+          </fieldset>
+          <fieldset><legend>Theme</legend>
+            <div class="fgrid">
+              <div class="field"><label for="st-theme">Theme preference</label>
+                <select id="st-theme"><option value="dark">Dark (default)</option><option value="light">Light</option></select>
+              </div>
+              <div class="field"><label for="st-accent">Accent color</label>
+                <div class="row"><input type="color" id="st-accent" value="#E9A23B" style="width:52px;height:44px;padding:4px;background:var(--bg2);border:1px solid var(--line2);border-radius:11px">
+                <input type="text" id="st-accent-hex" value="#E9A23B" class="mono" style="flex:1;background:var(--bg2);border:1px solid var(--line2);border-radius:11px;padding:12px 14px;color:var(--text)"></div>
+              </div>
+            </div>
+          </fieldset>
+          <fieldset><legend>SEO &amp; footer</legend>
+            <div class="field"><label for="st-seo-t">SEO title</label><input id="st-seo-t"></div>
+            <div class="field"><label for="st-seo-d">SEO description</label><textarea id="st-seo-d"></textarea></div>
+            <div class="field"><label for="st-seo-i">Social sharing image URL <small>(og:image)</small></label><input id="st-seo-i" type="url"></div>
+            <div class="field"><label for="st-footer">Footer text</label><input id="st-footer"></div>
+          </fieldset>
+          <div class="editor-actions">
+            <button class="btn btn-primary" type="submit" id="st-save"><span>Save settings</span></button>
+            <a class="btn btn-ghost" href="index.html" target="_blank" rel="noopener">Preview site</a>
+          </div>
+        </form>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="confirm-dlg">
+    <h3 id="confirm-title">Are you sure?</h3>
+    <p id="confirm-text">This action cannot be undone.</p>
+    <div class="dlg-actions">
+      <button class="btn btn-ghost btn-sm" id="confirm-no" type="button">Cancel</button>
+      <button class="btn btn-danger btn-sm" id="confirm-yes" type="button">Delete</button>
     </div>
-    <nav class="side__nav" id="sideNav" aria-label="Dashboard sections">
-      <button class="tab is-active" data-view="overview">Overview</button>
-      <button class="tab" data-view="hero">Hero</button>
-      <button class="tab" data-view="intro">Introduction</button>
-      <button class="tab" data-view="skills">Skills</button>
-      <button class="tab" data-view="projects">Projects</button>
-      <button class="tab" data-view="contact">Contact</button>
-      <button class="tab" data-view="settings">Site Settings</button>
-      <button class="tab" data-view="account">Account &amp; Security</button>
-    </nav>
-    <div class="side__foot">
-      <span id="whoami" class="who"></span>
-      <button class="btn btn--ghost btn--sm btn--full" id="signOutBtn">Sign out</button>
-    </div>
-  </aside>
+  </dialog>
 
-  <main class="main">
-    <header class="topbar">
-      <button class="iconbtn" id="sideToggle" aria-label="Toggle navigation">☰</button>
-      <h2 id="viewTitle">Overview</h2>
-      <a class="btn btn--ghost btn--sm" href="/" target="_blank" rel="noopener">View site</a>
-    </header>
-    <div class="views" id="views"></div>
-  </main>
-</div>
+  <div class="toast-wrap" id="toast-wrap" role="status" aria-live="polite"></div>
 
-<div class="toast" id="toast" role="status" aria-live="polite"></div>
-
-<noscript><p style="color:#ff9b9b;text-align:center;padding:2rem">JavaScript is required for the management console.</p></noscript>
-<script type="module" src="admin.js"></script>
-<script>
-// If the module fails to load (blocked CDN / offline), tell the admin instead of showing a dead form.
-window.addEventListener("error", function (e) {
-  if (e.target && e.target.tagName === "SCRIPT") {
-    var m = document.getElementById("authMsg");
-    if (m) { m.className = "msg err"; m.textContent = "Could not load Firebase. Check your internet connection."; }
-  }
-}, true);
-setTimeout(function () {
-  if (!window.__geesoftAdminReady) {
-    var m = document.getElementById("authMsg");
-    if (m && !m.textContent) { m.className = "msg err"; m.textContent = "Could not reach Firebase. Check your connection, then reload."; }
-  }
-}, 9000);
-</script>
+  <script type="module" src="admin.js"></script>
 </body>
 </html>
